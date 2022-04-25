@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -32,6 +32,7 @@
     "trailingComma": "es5"
   },
   "name": "fun-validation",
+  "description": "🥳 JS Functional validation library",
   "author": "Dusan Jovanov",
   "module": "dist/fun-validation.esm.js",
   "size-limit": [
