@@ -174,7 +174,7 @@ export function validate<Value extends any>(
   }
   if (isObject(rules)) {
     if ((rules as ValidationArray<any>)._type === validationArraySymbol) {
-      return {
+      return ({
         array: validate(
           value,
           ((rules as unknown) as any).arrayRules as ValidationRules<Value>
@@ -182,7 +182,7 @@ export function validate<Value extends any>(
         elements: (value as Array<any>).map(e =>
           validate(e, ((rules as unknown) as any).elementRules)
         ),
-      } as ValidationResult<Value>;
+      } as unknown) as ValidationResult<Value>;
     }
     return objectMap(value, (key, value) =>
       validate(value, (rules as any)[key])
