@@ -45,6 +45,8 @@ describe('isInteger', () => {
   });
 });
 
+// TODO: Test all individual validation functions
+
 describe('validate', () => {
   it('Array of strings', () => {
     expect(validate(['1', '2', '3'], [isArray, isString])).toEqual([
