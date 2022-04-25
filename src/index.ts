@@ -5,7 +5,7 @@ type ArrayElement<ArrType> = ArrType extends readonly (infer ElementType)[]
 type ValidationFn = (value: any) => boolean;
 
 type ValidationRules<Value> = Value extends Array<any>
-  ? ValidationArray<Value>
+  ? [ValidationFn, ValidationRules<ArrayElement<Value>>]
   : Value extends Date
   ? ValidationFn
   : Value extends object
@@ -16,22 +16,6 @@ type ValidationRules<Value> = Value extends Array<any>
     >
   : ValidationFn;
 
-const validationArraySymbol = Symbol('validationArray');
-
-class ValidationArray<Value> {
-  constructor(
-    arrayRules: ValidationFn,
-    elementRules: ValidationRules<ArrayElement<Value>>
-  ) {
-    this._type = validationArraySymbol;
-    this.arrayRules = arrayRules;
-    this.elementRules = elementRules;
-  }
-  _type: Symbol;
-  arrayRules: ValidationFn;
-  elementRules: ValidationRules<ArrayElement<Value>>;
-}
-
 type InferObjectType<T> = T extends infer G
   ? {
       [Key in keyof G]: ValidationResult<G[Key]>;
@@ -39,10 +23,7 @@ type InferObjectType<T> = T extends infer G
   : never;
 
 export type ValidationResult<Value> = Value extends Array<infer ArrayElement>
-  ? {
-      array: boolean;
-      elements: Array<ValidationResult<ArrayElement>>;
-    }
+  ? [boolean, Array<ValidationResult<ArrayElement>>]
   : Value extends Date
   ? boolean
   : Value extends object
@@ -89,10 +70,10 @@ export const isArrayShorterThan = (len: number) => (value: any) =>
 export const isArrayOfLength = (len: number) => (value: any) =>
   isArray(value) && value.length === len;
 
-export const isArrayOfMinLength = (len: number) => (value: any) =>
+export const isArrayMinLength = (len: number) => (value: any) =>
   isArray(value) && value.length >= len;
 
-export const isArrayOfMaxLength = (len: number) => (value: any) =>
+export const isArrayMaxLength = (len: number) => (value: any) =>
   isArray(value) && value.length <= len;
 
 export const isNumber = (value: any) => {
@@ -158,13 +139,6 @@ const objectMap = (
 ) =>
   Object.fromEntries(Object.entries(obj).map(([k, v], i) => [k, fn(k, v, i)]));
 
-export function array<Value>(
-  arrayRules: ValidationFn,
-  elementRules: ValidationRules<ArrayElement<Value>>
-) {
-  return new ValidationArray(arrayRules, elementRules);
-}
-
 export function validate<Value extends any>(
   value: Value,
   rules: ValidationRules<Value>
@@ -172,18 +146,16 @@ export function validate<Value extends any>(
   if (isFunction(rules)) {
     return (rules as ValidationFn)(value) as ValidationResult<Value>;
   }
-  if (isObject(rules)) {
-    if ((rules as ValidationArray<any>)._type === validationArraySymbol) {
-      return ({
-        array: validate(
-          value,
-          ((rules as unknown) as any).arrayRules as ValidationRules<Value>
-        ),
-        elements: (value as Array<any>).map(e =>
-          validate(e, ((rules as unknown) as any).elementRules)
-        ),
-      } as unknown) as ValidationResult<Value>;
+  if (isArray(rules)) {
+    if (isFunction(rules[0])) {
+      return [
+        validate(value, rules[0]),
+        (value as Array<any>).map(e => validate(e, rules[1])),
+      ] as ValidationResult<Value>;
     }
+    return validate(value, rules);
+  }
+  if (isObject(rules)) {
     return objectMap(value, (key, value) =>
       validate(value, (rules as any)[key])
     ) as ValidationResult<Value>;
