@@ -1,9 +1,6 @@
-# Fun validation
-
-# 🥳
+![Fun validation logo](https://raw.githubusercontent.com/dusanjovanov/fun-validation/master/logo.png 'Fun validation logo')
 
 JS Functional validation library
-<br />
 <br />
 
 [![npm](https://img.shields.io/npm/v/fun-validation?color=%231E90FF&label=npm&style=for-the-badge)](https://www.npmjs.com/package/fun-validation)
@@ -11,11 +8,11 @@ JS Functional validation library
 # Installation
 
 ```bash
-  npm install fun-validation
+npm install fun-validation
 ```
 
 ```bash
-  yarn add fun-validation
+yarn add fun-validation
 ```
 
 # Usage
@@ -23,10 +20,9 @@ JS Functional validation library
 This library exports a bunch of small validation functions that all have the following signature:
 
 ```tsx
-  (value: any) => boolean
-
-  // or when the validation requires additional parameters, we have currying:
-  (n:number) => (value: any) => boolean
+(value: any) => boolean
+// or when the validation requires additional parameters, we have currying:
+(n:number) => (value: any) => boolean
 ```
 
 So you would call a function like this:
@@ -139,10 +135,58 @@ So, to recapitulate:
 
 # API
 
-### validate(value: any, rules) => validationResult
+```tsx
+const validate: (value: any, rules) => validationResult
 
-And a bunch of small functions whose names start with is. Will list them all some other time.
+const isString: (value: any): boolean;
 
-# Support
+const isStringLongerThan: (len: number) => (value: any) => boolean
 
-This library supports all modern browsers (so, no IE 🤮)
+const isStringShorterThan:(len: number) => (value: any) => boolean
+
+const isStringOfLength: (len: number) => (value: any) => boolean
+
+const isStringOfMinLength: (len: number) => (value: any) => boolean
+
+const isStringOfMaxLength:(len: number) => (value: any) => boolean                                                                                                       7
+
+const isFunction: (obj: any) => boolean
+
+const isObject: (value: any) => boolean
+
+const isPromise: (value: any) => boolean
+
+const isArray: (value: any) => boolean
+
+const isArrayLongerThan: (len: number) => (value: any) => boolean
+
+const isArrayShorterThan: (len: number) => (value: any) => boolean
+
+const isArrayOfLength: (len: number) => (value: any) => boolean
+
+const isArrayMinLength: (len: number) => (value: any) => boolean
+
+const isArrayMaxLength: (len: number) => (value: any) => boolean
+
+const isNumber: (value: any) => boolean
+
+const isInteger: (value: any) => boolean
+
+const isFloat: (value: any) => boolean
+
+const isNumberMoreThan: (n: number) => (value: any) => boolean
+
+const isNumberLessThan: (n: number) => (value: any) => boolean
+
+const isNumberEqual: (n: number) => (value: any) => boolean
+
+const isNumberMin: (n: number) => (value: any) => boolean
+
+const isNumberMax: (n: number) => (value: any) => boolean
+
+const isPattern: (regex: RegExp) => (value: any) => boolean
+
+const isEmail: (value: any) => boolean
+
+const isUrl: (value: any) => boolean
+```
